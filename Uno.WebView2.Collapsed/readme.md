@@ -16,5 +16,5 @@ dotnet new unoapp -o Uno.WebView2.Collapsed -preset "recommended" -platforms "de
 ### Test Results
 
 - Windows - `NavigationCompleted` event is raised for both variants, regardless of visibility.
-- Linux - N/A
-- macOS - N/A
+- Linux - `NavigationCompleted` event is raised for both variants, regardless of visibility.
+- macOS - `NavigationCompleted` event isn't raised for callapsed variant.
