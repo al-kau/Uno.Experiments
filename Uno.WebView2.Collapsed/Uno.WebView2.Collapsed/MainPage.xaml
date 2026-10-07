@@ -52,7 +52,12 @@
                 Text="{x:Bind WebViewVisible.Visibility, Mode=OneWay, Converter={StaticResource VisibilityToStringConverter}}" />
         </StackPanel>
 
+        <Border
+            Grid.Row="1"
+            Grid.ColumnSpan="3"
+            Background="LightBlue" />
 
+        <!--  Note: WebView2.Background is ignored on Linux and macOS  -->
         <WebView2
             x:Name="WebViewCollapsed"
             Grid.Row="1"
@@ -61,6 +66,7 @@
             NavigationCompleted="WebViewCollapsed_NavigationCompleted"
             Visibility="Collapsed" />
 
+        <!--  Note: WebView2.Background is ignored on Linux and macOS  -->
         <WebView2
             x:Name="WebViewVisible"
             Grid.Row="1"
@@ -68,7 +74,6 @@
             Background="LightYellow"
             NavigationCompleted="WebViewVisible_NavigationCompleted"
             Visibility="Visible" />
-
 
         <TextBlock
             x:Name="WebViewCollapsedStatusTextBlock"
