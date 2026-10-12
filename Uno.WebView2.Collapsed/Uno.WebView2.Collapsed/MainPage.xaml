@@ -8,10 +8,13 @@
 
     <Page.Resources>
         <local:VisibilityToStringConverter x:Key="VisibilityToStringConverter" />
+        <local:WebView2ToStringConverter x:Key="WebView2ToStringConverter" />
     </Page.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
@@ -37,10 +40,23 @@
                 Text="{x:Bind WebViewCollapsed.Visibility, Mode=OneWay, Converter={StaticResource VisibilityToStringConverter}}" />
         </StackPanel>
 
-
         <StackPanel
             Grid.Row="0"
             Grid.Column="2"
+            Margin="8"
+            Orientation="Horizontal"
+            Spacing="16">
+            <Button Click="OnCreateAndNavigateWebViewClick" Content="Create And Navigate" />
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="20"
+                FontWeight="Bold"
+                Text="{x:Bind WebViewPlaceholder.Child, Mode=OneWay, Converter={StaticResource WebView2ToStringConverter}}" />
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="0"
+            Grid.Column="4"
             Margin="8"
             Orientation="Horizontal"
             Spacing="16">
@@ -54,7 +70,7 @@
 
         <Border
             Grid.Row="1"
-            Grid.ColumnSpan="3"
+            Grid.ColumnSpan="5"
             Background="LightBlue" />
 
         <!--  Note: WebView2.Background is ignored on Linux and macOS  -->
@@ -66,11 +82,16 @@
             NavigationCompleted="WebViewCollapsed_NavigationCompleted"
             Visibility="Collapsed" />
 
+        <Border
+            x:Name="WebViewPlaceholder"
+            Grid.Row="1"
+            Grid.Column="2" />
+
         <!--  Note: WebView2.Background is ignored on Linux and macOS  -->
         <WebView2
             x:Name="WebViewVisible"
             Grid.Row="1"
-            Grid.Column="2"
+            Grid.Column="4"
             Background="LightYellow"
             NavigationCompleted="WebViewVisible_NavigationCompleted"
             Visibility="Visible" />
@@ -84,9 +105,17 @@
             Text="Navigation is not completed" />
 
         <TextBlock
-            x:Name="WebViewVisibleStatusTextBlock"
+            x:Name="WebViewCreatedStatusTextBlock"
             Grid.Row="2"
             Grid.Column="2"
+            Margin="8"
+            Foreground="Orange"
+            Text="Navigation is not completed" />
+
+        <TextBlock
+            x:Name="WebViewVisibleStatusTextBlock"
+            Grid.Row="2"
+            Grid.Column="4"
             Margin="8"
             Foreground="Orange"
             Text="Navigation is not completed" />
@@ -94,6 +123,12 @@
         <Border
             Grid.RowSpan="3"
             Grid.Column="1"
+            Width="4"
+            Background="Black" />
+
+        <Border
+            Grid.RowSpan="3"
+            Grid.Column="3"
             Width="4"
             Background="Black" />
 

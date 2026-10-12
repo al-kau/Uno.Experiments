@@ -1,9 +1,4 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.UI;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 
 namespace Uno.WebView2.Collapsed;
 
@@ -14,11 +9,35 @@ public sealed partial class MainPage : Page
         this.InitializeComponent();
     }
 
+    private async void OnCreateAndNavigateWebViewClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            WebViewPlaceholder.Child = null;
+
+            Microsoft.UI.Xaml.Controls.WebView2 webView2 = new();
+            WebViewPlaceholder.Child = webView2;
+
+            await webView2.EnsureCoreWebView2Async();
+            webView2.NavigationCompleted += (s, args) => UpdateNavigationStatusTextBlock(WebViewCreatedStatusTextBlock, args);
+            webView2.CoreWebView2.NavigationCompleted += (s, args) => UpdateNavigationStatusTextBlock(WebViewCreatedStatusTextBlock, args);
+
+            await Navigate(webView2, WebViewCreatedStatusTextBlock);
+        }
+        catch (Exception ex)
+        {
+            OnError(WebViewCreatedStatusTextBlock, ex);
+        }
+    }
+
     private async void OnShowAndNavigateWebViewCollapsedClick(object sender, RoutedEventArgs e)
     {
         try
         {
             WebViewCollapsed.Visibility = Visibility.Visible;
+            await WebViewCollapsed.EnsureCoreWebView2Async();
+            WebViewCollapsed.NavigationCompleted += (s, args) => UpdateNavigationStatusTextBlock(WebViewCollapsedStatusTextBlock, args);
+            WebViewCollapsed.CoreWebView2.NavigationCompleted += (s, args) => UpdateNavigationStatusTextBlock(WebViewCollapsedStatusTextBlock, args);
             await Navigate(WebViewCollapsed, WebViewCollapsedStatusTextBlock);
         }
         catch (Exception ex)
@@ -79,6 +98,28 @@ public class VisibilityToStringConverter : Microsoft.UI.Xaml.Data.IValueConverte
         {
             return visibility.ToString();
         }
+        return "Unknown";
+    }
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class WebView2ToStringConverter : Microsoft.UI.Xaml.Data.IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is null)
+        {
+            return "Null";
+        }
+
+        if (value is Microsoft.UI.Xaml.Controls.WebView2 webView2)
+        {
+            return webView2.ToString();
+        }
+
         return "Unknown";
     }
     public object ConvertBack(object value, Type targetType, object parameter, string language)
