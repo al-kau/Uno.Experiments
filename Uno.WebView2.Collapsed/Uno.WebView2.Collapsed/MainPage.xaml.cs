@@ -30,7 +30,7 @@ public sealed partial class MainPage : Page
         }
     }
 
-    private async void OnShowAndNavigateWebViewCollapsedClick(object sender, RoutedEventArgs e)
+    private async void OnShowAndNavigateWebViewClick(object sender, RoutedEventArgs e)
     {
         try
         {
@@ -43,6 +43,22 @@ public sealed partial class MainPage : Page
         catch (Exception ex)
         {
             OnError(WebViewCollapsedStatusTextBlock, ex);
+        }
+    }
+
+    private async void OnOpacityAndNavigateWebViewClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            WebViewOpacity.Opacity = 1;
+            await WebViewOpacity.EnsureCoreWebView2Async();
+            WebViewOpacity.NavigationCompleted += (s, args) => UpdateNavigationStatusTextBlock(WebViewOpacityStatusTextBlock, args);
+            WebViewOpacity.CoreWebView2.NavigationCompleted += (s, args) => UpdateNavigationStatusTextBlock(WebViewOpacityStatusTextBlock, args);
+            await Navigate(WebViewOpacity, WebViewOpacityStatusTextBlock);
+        }
+        catch (Exception ex)
+        {
+            OnError(WebViewOpacityStatusTextBlock, ex);
         }
     }
 
@@ -61,6 +77,11 @@ public sealed partial class MainPage : Page
     private void WebViewCollapsed_NavigationCompleted(Microsoft.UI.Xaml.Controls.WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
     {
         UpdateNavigationStatusTextBlock(WebViewCollapsedStatusTextBlock, args);
+    }
+
+    private void WebViewOpacity_NavigationCompleted(Microsoft.UI.Xaml.Controls.WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
+    {
+        UpdateNavigationStatusTextBlock(WebViewOpacityStatusTextBlock, args);
     }
 
     private void WebViewVisible_NavigationCompleted(Microsoft.UI.Xaml.Controls.WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
@@ -87,43 +108,5 @@ public sealed partial class MainPage : Page
     {
         textBlock.Text = $"Error: {ex.Message}";
         textBlock.Foreground = new SolidColorBrush(Colors.Red);
-    }
-}
-
-public class VisibilityToStringConverter : Microsoft.UI.Xaml.Data.IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is Visibility visibility)
-        {
-            return visibility.ToString();
-        }
-        return "Unknown";
-    }
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class WebView2ToStringConverter : Microsoft.UI.Xaml.Data.IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is null)
-        {
-            return "Null";
-        }
-
-        if (value is Microsoft.UI.Xaml.Controls.WebView2 webView2)
-        {
-            return webView2.ToString();
-        }
-
-        return "Unknown";
-    }
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
     }
 }
